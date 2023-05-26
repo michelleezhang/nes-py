@@ -24,6 +24,7 @@ try:
 except IndexError:
     raise OSError('missing static lib_nes_env*.so library!')
 
+level_array = ctypes.c_char * (13*48)
 
 # setup the argument and return types for Width
 _LIB.Width.argtypes = None
@@ -34,6 +35,9 @@ _LIB.Height.restype = ctypes.c_uint
 # setup the argument and return types for Initialize
 _LIB.Initialize.argtypes = [ctypes.c_wchar_p]
 _LIB.Initialize.restype = ctypes.c_void_p
+# setup the argument and return types for SetCustomLevel
+_LIB.SetCustomLevel.argtypes = [ctypes.c_void_p, ctypes.POINTER(level_array)]
+_LIB.SetCustomLevel.restype = None
 # setup the argument and return types for Controller
 _LIB.Controller.argtypes = [ctypes.c_void_p, ctypes.c_uint]
 _LIB.Controller.restype = ctypes.c_void_p
@@ -149,6 +153,13 @@ class NESEnv(gym.Env):
         self.controllers = [self._controller_buffer(port) for port in range(2)]
         self.screen = self._screen_buffer()
         self.ram = self._ram_buffer()
+        level_data = (b'\x00' * 11 + b'\x54' * 2) * 48
+        self.set_custom_level(level_data)
+
+    def set_custom_level(self, level_data: bytes):
+        assert len(level_data) == 13*48
+        array = (ctypes.c_char*(13*48))(*level_data)
+        _LIB.SetCustomLevel(self._env, array)
 
     def _screen_buffer(self):
         """Setup the screen buffer from the C++ code."""

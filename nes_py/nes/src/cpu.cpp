@@ -7,6 +7,7 @@
 
 #include "cpu.hpp"
 #include "log.hpp"
+#include "custom_level.hpp"
 
 namespace NES {
 
@@ -542,6 +543,7 @@ void CPU::interrupt(MainBus &bus, InterruptType type) {
 }
 
 void CPU::cycle(MainBus &bus) {
+    // std::cout << std::hex << register_PC << std::endl;
     // increment the number of cycles
     ++cycles;
     // if in a skip cycle, return
@@ -550,6 +552,23 @@ void CPU::cycle(MainBus &bus) {
     // reset the number of skip cycles to 0
     skip_cycles = 0;
     // read the opcode from the bus and lookup the number of cycles
+    // std::cout << "op at addr offset (" << register_PC << "): " << std::hex << +bus.read(register_PC) << std::endl << std::flush;
+    // int block_buffer_address = read_address(bus, 0x06);
+    // std::cout << "address: " << std::hex << +block_buffer_address << std::endl;
+    // std::cout << "blockBufferColumnPos: " << std::hex << +bus.read(0x06A0) << std::endl;
+    // std::cout << "currentColumnPos: " << std::hex << +bus.read(0x0726) << std::endl;
+    // std::cout << "MetaTile buffer:" << std::endl;
+
+    if (register_PC == CustomLevel::inject_instruction) {
+        // for (int i=0; i<13; i++) { //iter MetaTiles
+        //     // std::cout << std::hex << +bus.read(0x06a1 + i) << ", ";
+        //     // bus.write(0x06a1+i, i+bus.read(0x06A0));
+        //     bus.write(0x06a1+i, 0x54);
+        // }
+        // std::cout << std::endl;
+        // std::cout << "injecting custom level..." << std::endl << std::flush;
+        custom_level->inject_column(bus);
+    }
     NES_Byte op = bus.read(register_PC++);
     // Using short-circuit evaluation, call the other function only if the
     // first failed. ExecuteImplied must be called first and ExecuteBranch

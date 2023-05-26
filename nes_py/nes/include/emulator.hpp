@@ -59,6 +59,14 @@ class Emulator {
     ///
     explicit Emulator(std::string rom_path);
 
+    /// Set the custom level data from an array of bytes
+    ///
+    /// @param level_data an array of bytes to use as the level data
+    ///
+    void set_custom_level(std::array<char, LEVEL_SIZE> &level_data) {
+        cpu.set_custom_level(level_data);
+    }
+
     /// Return a 32-bit pointer to the screen buffer's first address.
     ///
     /// @return a 32-bit pointer to the screen buffer's first address

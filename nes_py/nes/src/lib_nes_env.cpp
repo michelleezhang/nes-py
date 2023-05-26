@@ -42,6 +42,10 @@ extern "C" {
         return new NES::Emulator(rom_path);
     }
 
+    EXP void SetCustomLevel(NES::Emulator* emu, std::array<char, LEVEL_SIZE> &level_data) {
+        emu->set_custom_level(level_data);
+    }
+
     /// Return a pointer to a controller on the machine
     EXP NES::NES_Byte* Controller(NES::Emulator* emu, int port) {
         return emu->get_controller(port);

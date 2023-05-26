@@ -11,6 +11,7 @@
 #include "common.hpp"
 #include "cpu_opcodes.hpp"
 #include "main_bus.hpp"
+#include "custom_level.hpp"
 
 namespace NES {
 
@@ -33,6 +34,7 @@ class CPU {
     int skip_cycles;
     /// The number of cycles the CPU has run
     int cycles;
+    CustomLevel* custom_level;
 
     /// Set the zero and negative flags based on the given value.
     ///
@@ -136,6 +138,14 @@ class CPU {
 
     /// Initialize a new CPU.
     CPU() { };
+
+    /// Set custom level
+    void set_custom_level(std::array<char, LEVEL_SIZE> &level_data) {
+        if (custom_level) {
+            delete custom_level;
+        }
+        custom_level = new CustomLevel(level_data);
+    }
 
     /// Reset using the given main bus to lookup a starting address.
     ///
