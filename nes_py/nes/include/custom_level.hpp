@@ -24,7 +24,6 @@ namespace NES {
 class CustomLevel {
   private:
     std::array<char, LEVEL_SIZE> tiles;
-    int internal_column_position;
   public:
     const static NES_Address inject_instruction = 0x94DC;
     // const static NES_Address reset_instruction = 0x0000;
@@ -32,7 +31,6 @@ class CustomLevel {
 
     CustomLevel(const std::string& level_file_path) {
         std::cout << level_file_path << std::endl;
-        internal_column_position = 0;
         std::ifstream level_file(level_file_path, std::ios::binary);
 
         if(!level_file) {
@@ -52,14 +50,11 @@ class CustomLevel {
 
     void inject_column(MainBus &bus) {
         // std::cout << "internal column position: " << internal_column_position << std::endl << std::flush;
+        int page = bus.read(0x0725);
+        int page_column = bus.read(0x0726);
+        int absolute_column = 16*page+page_column;
         for (int i=0; i<LEVEL_HEIGHT; i++) {
-            bus.write(metatile_buffer_addr+i, tiles[internal_column_position*LEVEL_HEIGHT + i]);
-            // bus.write(metatile_buffer_addr+i, tiles[0]);
-            // bus.write(metatile_buffer_addr+i, 0x54);
-        }
-        internal_column_position++;
-        if (internal_column_position >= LEVEL_WIDTH) {
-            internal_column_position = 0;
+            bus.write(metatile_buffer_addr+i, tiles[absolute_column*LEVEL_HEIGHT + i]);
         }
     }
 };
