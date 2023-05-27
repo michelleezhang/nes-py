@@ -61,9 +61,9 @@ class Emulator {
 
     /// Set the custom level data from an array of bytes
     ///
-    /// @param level_data an array of bytes to use as the level data
+    /// @param level_data an vector of bytes to use as the level data
     ///
-    void set_custom_level(std::array<char, LEVEL_SIZE> &level_data) {
+    void set_custom_level(std::vector<char> &level_data) {
         cpu.set_custom_level(level_data);
     }
 

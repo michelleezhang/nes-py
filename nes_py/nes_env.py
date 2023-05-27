@@ -24,8 +24,6 @@ try:
 except IndexError:
     raise OSError('missing static lib_nes_env*.so library!')
 
-level_array = ctypes.c_char * (13*48)
-
 # setup the argument and return types for Width
 _LIB.Width.argtypes = None
 _LIB.Width.restype = ctypes.c_uint
@@ -36,7 +34,7 @@ _LIB.Height.restype = ctypes.c_uint
 _LIB.Initialize.argtypes = [ctypes.c_wchar_p]
 _LIB.Initialize.restype = ctypes.c_void_p
 # setup the argument and return types for SetCustomLevel
-_LIB.SetCustomLevel.argtypes = [ctypes.c_void_p, ctypes.POINTER(level_array)]
+_LIB.SetCustomLevel.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_char), ctypes.c_int]
 _LIB.SetCustomLevel.restype = None
 # setup the argument and return types for Controller
 _LIB.Controller.argtypes = [ctypes.c_void_p, ctypes.c_uint]
@@ -154,12 +152,14 @@ class NESEnv(gym.Env):
         self.screen = self._screen_buffer()
         self.ram = self._ram_buffer()
         level_data = (b'\x00' * 11 + b'\x54' * 2) * 48
+        level_data = np.array(list(level_data))
         self.set_custom_level(level_data)
 
-    def set_custom_level(self, level_data: bytes):
-        assert len(level_data) == 13*48
-        array = (ctypes.c_char*(13*48))(*level_data)
-        _LIB.SetCustomLevel(self._env, array)
+    def set_custom_level(self, level_data: np.ndarray):
+        assert len(level_data) % 13 == 0
+        # array = (ctypes.c_char*(13*48))(*level_data)
+        level_data = level_data.astype(np.ubyte)
+        _LIB.SetCustomLevel(self._env, level_data.ctypes.data_as(ctypes.POINTER(ctypes.c_char)), len(level_data))
 
     def _screen_buffer(self):
         """Setup the screen buffer from the C++ code."""

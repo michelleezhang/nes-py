@@ -15,19 +15,18 @@
 #ifndef CUSTOM_HPP
 #define CUSTOM_HPP
 
-#define LEVEL_WIDTH 48
 #define LEVEL_HEIGHT 13
-#define LEVEL_SIZE LEVEL_WIDTH*LEVEL_HEIGHT
 
 namespace NES {
 
 class CustomLevel {
   private:
-    std::array<char, LEVEL_SIZE> tiles;
+    std::vector<char> tiles;
   public:
     const static NES_Address inject_instruction = 0x94DC;
-    // const static NES_Address reset_instruction = 0x0000;
-    const static NES_Address metatile_buffer_addr = 0x06a1;
+    const static NES_Address metatile_buffer_addr = 0x06A1;
+    const static NES_Address page_address = 0x0725;
+    const static NES_Address column_address = 0x0726;
 
     CustomLevel(const std::string& level_file_path) {
         std::cout << level_file_path << std::endl;
@@ -42,19 +41,22 @@ class CustomLevel {
         level_file.close();
     }
 
-    CustomLevel(const std::array<char, LEVEL_SIZE> &level_data) {
-        for (int i=0; i<LEVEL_SIZE; i++) {
-            tiles[i] = level_data[i];
+    CustomLevel(const std::vector<char> &level_data) {
+        int size = level_data.size();
+        if (size % 13 != 0) {
+            throw std::runtime_error("level data must be divisible by 13!");
         }
+        tiles = level_data;
     }
 
     void inject_column(MainBus &bus) {
         // std::cout << "internal column position: " << internal_column_position << std::endl << std::flush;
-        int page = bus.read(0x0725);
-        int page_column = bus.read(0x0726);
+        int page = bus.read(page_address);
+        int page_column = bus.read(column_address);
         int absolute_column = 16*page+page_column;
         for (int i=0; i<LEVEL_HEIGHT; i++) {
-            bus.write(metatile_buffer_addr+i, tiles[absolute_column*LEVEL_HEIGHT + i]);
+            char tile = tiles[absolute_column*LEVEL_HEIGHT + i];
+            bus.write(metatile_buffer_addr+i, tile);
         }
     }
 };

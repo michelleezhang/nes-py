@@ -140,7 +140,7 @@ class CPU {
     CPU() { };
 
     /// Set custom level
-    void set_custom_level(std::array<char, LEVEL_SIZE> &level_data) {
+    void set_custom_level(std::vector<char> &level_data) {
         if (custom_level) {
             delete custom_level;
         }
