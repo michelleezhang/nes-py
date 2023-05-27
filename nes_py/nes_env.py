@@ -151,14 +151,14 @@ class NESEnv(gym.Env):
         self.controllers = [self._controller_buffer(port) for port in range(2)]
         self.screen = self._screen_buffer()
         self.ram = self._ram_buffer()
-        level_data = (b'\x00' * 11 + b'\x54' * 2) * 128
-        level_data = np.array(list(level_data))
+        level_data = np.zeros((13, 128))
+        level_data[11:13] += 0x54 
         self.set_custom_level(level_data)
 
     def set_custom_level(self, level_data: np.ndarray):
-        assert len(level_data) % 13 == 0
+        assert level_data.shape[0] == 13
         # array = (ctypes.c_char*(13*48))(*level_data)
-        level_data = level_data.astype(np.ubyte)
+        level_data = level_data.flatten('f').astype(np.ubyte)
         _LIB.SetCustomLevel(self._env, level_data.ctypes.data_as(ctypes.POINTER(ctypes.c_char)), len(level_data))
 
     def _screen_buffer(self):
