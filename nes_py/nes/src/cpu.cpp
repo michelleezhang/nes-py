@@ -552,21 +552,68 @@ void CPU::cycle(MainBus &bus) {
     // reset the number of skip cycles to 0
     skip_cycles = 0;
     // read the opcode from the bus and lookup the number of cycles
-    // std::cout << "op at addr offset (" << register_PC << "): " << std::hex << +bus.read(register_PC) << std::endl << std::flush;
     // int block_buffer_address = read_address(bus, 0x06);
     // std::cout << "address: " << std::hex << +block_buffer_address << std::endl;
     // std::cout << "blockBufferColumnPos: " << std::hex << +bus.read(0x06A0) << std::endl;
     // std::cout << "currentColumnPos: " << std::hex << +bus.read(0x0726) << std::endl;
     // std::cout << "MetaTile buffer:" << std::endl;
 
+    //0xc053 worked
+    int target = 0xC14A+12+20;
+    // if (register_PC == target) {
+    //     // std::cout << "Enemy stuff" << std::endl << std::flush;
+    //     std::cout << "EnemyDataOffset: " << std::hex << +bus.read(0x0739) << std::endl;
+    //     std::cout << "EnemyObjectPageLoc: " << std::hex << +bus.read(0x073A) << std::endl;
+    //     std::cout << "EnemyObjectPageSel: " << std::hex << +bus.read(0x073B) << std::endl;
+    //     std::cout << "Enemy_X_Position: ";
+    //     for (int i=0; i<6; i++) {
+    //         std::cout << std::hex << +bus.read(0x87 + i) << ", ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "Enemy_Flag: ";
+    //     for (int i=0; i<6; i++) {
+    //         std::cout << std::hex << +bus.read(0x0F + i) << ", ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "Enemy_State: ";
+    //     for (int i=0; i<6; i++) {
+    //         std::cout << std::hex << +bus.read(0x1E + i) << ", ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "Enemy_Y_HighPos: ";
+    //     for (int i=0; i<6; i++) {
+    //         std::cout << std::hex << +bus.read(0xB6 + i) << ", ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "Enemy_Y_Position: ";
+    //     for (int i=0; i<6; i++) {
+    //         std::cout << std::hex << +bus.read(0xCF + i) << ", ";
+    //     }
+    //     std::cout << std::endl;
+
+    //     // std::cout << "EnemyData: " << std::hex << +read_address(bus, 0xE9) << std::endl;
+    //     int offset = bus.read(0x0739);
+    //     int addr = 0x9F01+offset;
+    //     std::cout << "Current enemy address: " << std::hex << addr << std::endl;
+    //     int current_enemy_data_low = bus.read(addr);
+    //     int current_enemy_data_high = bus.read(addr+1);
+    //     std::cout << "Current enemy data: " << std::hex << +current_enemy_data_high << ", " << +current_enemy_data_low << std::endl;
+    //     bus.write(addr, 0);
+    //     // std::cout << "op at address" << std::hex << +bus.read(register_PC) << std::endl << std::flush;
+    // }
+    // if (register_PC == 0xC1E7) {
+    //     std::cout << "Enemy_Y_Position: " << std::hex << +bus.read(0xCF + register_X) << std::endl;
+    //     std::cout << "Enemy_X_Position: " << std::hex << +bus.read(0x87 + register_X) << std::endl;
+    //     bus.write(0xCF + register_X, 0xB0);
+    //     bus.write(0x87 + register_X, 0xFF);
+    // }
+    // if (bus.read(register_PC) == 0xb1 && bus.read(register_PC+1) == 0xe9 && bus.read(register_PC+2) == 0xC9 && bus.read(register_PC+3) == 0xff) {
+    //     std::cout << std::hex << register_PC << std::endl;
+    // }
+    if (register_PC == 0xC14F) {
+        register_A = 0xFF;
+    }
     if (register_PC == CustomLevel::inject_instruction) {
-        // for (int i=0; i<13; i++) { //iter MetaTiles
-        //     // std::cout << std::hex << +bus.read(0x06a1 + i) << ", ";
-        //     // bus.write(0x06a1+i, i+bus.read(0x06A0));
-        //     bus.write(0x06a1+i, 0x54);
-        // }
-        // std::cout << std::endl;
-        // std::cout << "injecting custom level..." << std::endl << std::flush;
         custom_level->inject_column(bus);
     }
     NES_Byte op = bus.read(register_PC++);

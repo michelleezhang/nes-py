@@ -151,7 +151,7 @@ class NESEnv(gym.Env):
         self.controllers = [self._controller_buffer(port) for port in range(2)]
         self.screen = self._screen_buffer()
         self.ram = self._ram_buffer()
-        level_data = (b'\x00' * 11 + b'\x54' * 2) * 48
+        level_data = (b'\x00' * 11 + b'\x54' * 2) * 128
         level_data = np.array(list(level_data))
         self.set_custom_level(level_data)
 
