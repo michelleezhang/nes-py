@@ -55,7 +55,7 @@ class CustomLevel {
         int page_column = bus.read(column_address);
         int absolute_column = 16*page+page_column;
         for (int i=0; i<LEVEL_HEIGHT; i++) {
-            char tile = tiles[absolute_column*LEVEL_HEIGHT + i];
+            char tile = tiles.at(absolute_column*LEVEL_HEIGHT + i);
             bus.write(metatile_buffer_addr+i, tile);
         }
     }

@@ -137,7 +137,9 @@ class CPU {
     };
 
     /// Initialize a new CPU.
-    CPU() { };
+    CPU() {
+        custom_level = nullptr;
+     };
 
     /// Set custom level
     void set_custom_level(std::vector<char> &level_data) {
