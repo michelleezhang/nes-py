@@ -106,6 +106,7 @@ class Emulator {
     inline void restore() {
         bus = backup_bus;
         picture_bus = backup_picture_bus;
+        backup_cpu.custom_level = cpu.custom_level;
         cpu = backup_cpu;
         ppu = backup_ppu;
     }

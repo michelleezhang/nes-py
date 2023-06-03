@@ -34,7 +34,6 @@ class CPU {
     int skip_cycles;
     /// The number of cycles the CPU has run
     int cycles;
-    CustomLevel* custom_level;
 
     /// Set the zero and negative flags based on the given value.
     ///
@@ -129,6 +128,7 @@ class CPU {
     void reset(NES_Address start_address);
 
  public:
+    CustomLevel* custom_level;
     /// The interrupt types available to this CPU
     enum InterruptType {
         IRQ_INTERRUPT,
